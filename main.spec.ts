@@ -1,10 +1,6 @@
-import { cold, hot } from 'jest-marbles';
-
 import {
   getLukeSkywalkerInfo,
   getLukeSkywalkerInfoAsync,
-  getLukeSkywalkerInfoCallback,
-  getLukeSkywalkerInfoObservable,
   PersonInfo,
 } from "./main";
 
@@ -48,15 +44,3 @@ test("getLukeSkywalkerInfoAsync", async () => {
   expect(result).toStrictEqual(expectedResult);
 });
 
-test("getLukeSkywalkerInfoCallback", (done) => {
-  getLukeSkywalkerInfoCallback((result: PersonInfo) => {
-    expect(result).toStrictEqual(expectedResult);
-    // the test should not complete before the callback was called
-    done();
-  });
-});
-
-test("getLukeSkywalkerInfoObservable", async () => {
-  const result = await getLukeSkywalkerInfoObservable().toPromise();
-  expect(result).toStrictEqual(expectedResult);
-});

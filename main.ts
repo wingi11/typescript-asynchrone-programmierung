@@ -1,5 +1,4 @@
 import fetch, { Response } from "node-fetch";
-import https from "https";
 import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 
@@ -58,25 +57,7 @@ export const getLukeSkywalkerInfoAsync: PromiseBasedFunction = async () => {
   return (await {}) as PersonInfo;
 };
 
-// Task 3: write a function using callback https.get
-// see also: https://nodejs.org/api/https.html#httpsgetoptions-callback
-type CallbackBasedFunction = (callback: (res: PersonInfo) => void) => void;
-export const getLukeSkywalkerInfoCallback: CallbackBasedFunction = (
-  callback
-) => {
-  https.get("https://swapi.dev/api/people/1", (response) => {
-    let body: string = "";
-    response.on("data", (data) => {
-      body += data;
-    });
-    response.on("end", () => {
-      const person: Person = JSON.parse(body); // JSON.parse(body) parses a string to an object
-      callback({} as PersonInfo);
-    });
-  });
-};
-
-// Task 4: write a function using Observable based api
+// Task 3: write a function using Observable based api
 export const getLukeSkywalkerInfoObservable = () => {
   return fetch$<Person>("https://swapi.dev/api/people/1").pipe(
     // use mergeMap() when the call returns an observable,
