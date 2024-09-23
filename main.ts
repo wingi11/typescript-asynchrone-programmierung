@@ -1,6 +1,4 @@
 import fetch, { Response } from "node-fetch";
-import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
 
 /* 
 Read data from https://swapi.dev/api/people/1 (Luke Skywalker)
@@ -55,31 +53,4 @@ export const getLukeSkywalkerInfoAsync: PromiseBasedFunction = async () => {
   const response = await fetch("https://swapi.dev/api/people/1");
   // TODO: load other stuff and return LukeSkywalkerInfo
   return (await {}) as PersonInfo;
-};
-
-// Task 3: write a function using Observable based api
-export const getLukeSkywalkerInfoObservable = () => {
-  return fetch$<Person>("https://swapi.dev/api/people/1").pipe(
-    // use mergeMap() when the call returns an observable,
-    // e.g. mergeMap(person => fetch$('url').pipe(map(res => ...)))
-    map(person => {}),
-    map(() => {
-      return {} as PersonInfo
-    })
-  );
-};
-
-
-// simulates a fetch call returning an observable
-const fetch$ = <T>(url: string) => {
-  return new Observable((subscriber) => {
-    fetch(url)
-      .then((response) =>
-        response.json().then((data) => {
-          subscriber.next(data);
-          subscriber.complete();
-        })
-      )
-      .catch((err) => subscriber.error(err));
-  });
 };
