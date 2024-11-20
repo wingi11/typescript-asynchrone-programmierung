@@ -1,10 +1,13 @@
+import { of, throwError } from "rxjs";
 import {
-  PersonInfo,
   getLukeSkywalkerInfo,
   getLukeSkywalkerInfoAsync,
+  getLukeSkywalkerInfoObservable,
 } from "./main";
 jest.mock("node-fetch");
+jest.mock("./utils");
 import fetch from "node-fetch";
+import { get } from "./utils";
 
 // promise based
 test("getLukeSkywalkerInfo when https://swapi.dev/api/people/1 api call fails, should return people error", (done) => {
@@ -178,6 +181,103 @@ test("getLukeSkywalkerInfoAsync when https://swapi.dev/api/films/6/ api call fai
   await expect(getLukeSkywalkerInfoAsync()).rejects.toThrow(
     "Film 6 call failed"
   );
+});
+
+// observable based
+test("getLukeSkywalkerInfoObservable when https://swapi.dev/api/people/1 api call fails, should return people error", (done) => {
+  (get as unknown as jest.Mock<any, any>).mockImplementation((url) => {
+    if (url === "https://swapi.dev/api/people/1") {
+      return throwError(() => "People call failed");
+    }
+  });
+
+  getLukeSkywalkerInfoObservable().subscribe({
+    next: () => {},
+    error: (error) => {
+      expect(error).toBe("People call failed");
+      done();
+    },
+  });
+});
+
+test("getLukeSkywalkerInfoAsync when https://swapi.dev/api/planets/1/ api call fails, should return homeworld error", (done) => {
+  (get as unknown as jest.Mock<any, any>).mockImplementation((url) => {
+    if (url === "https://swapi.dev/api/people/1") {
+      return of(peopleCallback);
+    }
+
+    if (url === "https://swapi.dev/api/planets/1/") {
+      return throwError(() => "Homeworld call failed");
+    }
+
+    if (url.startsWith("https://swapi.dev/api/films/")) {
+      return of(filmCallback);
+    }
+  });
+
+  getLukeSkywalkerInfoObservable().subscribe({
+    next: () => {},
+    error: (error) => {
+      expect(error).toBe("Homeworld call failed");
+      done();
+    },
+  });
+});
+
+test("getLukeSkywalkerInfoAsync when https://swapi.dev/api/films/1/ api call fails, should return Film 1 error", (done) => {
+  (get as unknown as jest.Mock<any, any>).mockImplementation((url) => {
+    if (url === "https://swapi.dev/api/people/1") {
+      return of(peopleCallback);
+    }
+
+    if (url === "https://swapi.dev/api/planets/1/") {
+      return of(homeworldCallback);
+    }
+
+    if (url === "https://swapi.dev/api/films/1/") {
+      return throwError(() => "Film 1 call failed");
+    }
+
+    if (url.startsWith("https://swapi.dev/api/films/")) {
+      return of(filmCallback);
+    }
+  });
+
+  getLukeSkywalkerInfoObservable().subscribe({
+    next: () => {},
+    error: (error) => {
+      expect(error).toBe("Film 1 call failed");
+      done();
+    },
+  });
+});
+
+test("getLukeSkywalkerInfoAsync when https://swapi.dev/api/films/6/ api call fails, should return Film 6 error", (done) => {
+  (get as unknown as jest.Mock<any, any>).mockImplementation((url) => {
+    if (url === "https://swapi.dev/api/people/1") {
+      return of(peopleCallback);
+    }
+
+    if (url === "https://swapi.dev/api/planets/1/") {
+      return of(homeworldCallback);
+    }
+
+    if (url === "https://swapi.dev/api/films/6/") {
+      return throwError(() => "Film 6 call failed");
+    }
+
+    if (url.startsWith("https://swapi.dev/api/films/")) {
+      return of(filmCallback);
+    }
+  });
+
+  getLukeSkywalkerInfoObservable().subscribe({
+    next: () => {},
+    error: (error) => {
+      expect(error).toBe("Film 6 call failed");
+      done();
+    },
+  });
 });
 
 const peopleCallback = {

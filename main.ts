@@ -1,4 +1,7 @@
 import fetch, { Response } from "node-fetch";
+import { map, mergeMap } from "rxjs/operators";
+import { get } from "./utils";
+import { of } from "rxjs";
 
 /* 
 Read data from https://swapi.dev/api/people/1 (Luke Skywalker)
@@ -53,4 +56,15 @@ export const getLukeSkywalkerInfoAsync: PromiseBasedFunction = async () => {
   const response = await fetch("https://swapi.dev/api/people/1");
   // TODO: load other stuff and return LukeSkywalkerInfo
   return (await {}) as PersonInfo;
+};
+
+// Task 3: write a function using Observable based api
+// see also: https://rxjs.dev/api/index/function/forkJoin
+export const getLukeSkywalkerInfoObservable = () => {
+  return get<Person>("https://swapi.dev/api/people/1").pipe(
+    mergeMap((person: Person) => {
+      // TODO: load other stuff and return LukeSkywalkerInfo
+      return of({} as PersonInfo);
+    })
+  );
 };

@@ -1,6 +1,8 @@
+import { firstValueFrom } from "rxjs";
 import {
   getLukeSkywalkerInfo,
   getLukeSkywalkerInfoAsync,
+  getLukeSkywalkerInfoObservable,
   PersonInfo,
 } from "./main";
 
@@ -44,3 +46,7 @@ test("getLukeSkywalkerInfoAsync", async () => {
   expect(result).toStrictEqual(expectedResult);
 });
 
+test("getLukeSkywalkerInfoObservable", async () => {
+  const result = await firstValueFrom(getLukeSkywalkerInfoObservable());
+  expect(result).toStrictEqual(expectedResult);
+});
